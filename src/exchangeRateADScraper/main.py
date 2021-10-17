@@ -60,18 +60,30 @@ class ExchangeRateADScraper:
                     bopa_links_year.append({"text": link.text, "link": link['href']})
         return bopa_links_year
 
-    def __get_monetary_value(self, link):
+    def __get_monetary_value(self, link, year, month):
         monetary_value = []
-
         if global_vars.is_developing:
             html = html_webs.bopa
         else:
-            res = requests.get(link.get("link"), headers=global_vars.headers, verify=False)
+            res = requests.get(link.get("link"), headers=global_vars.HEADERS, verify=False)
             html = res.text
         soup = BeautifulSoup(html, "html.parser")
-        for tr in soup.findAll("tr"):
+
+        tag_font = None
+        if year == "2014":
+            table = soup.find("table")
+            trs = table.findChildren("tr")
+            if 1 <= int(month) <= 5:
+                tag_font = "font"
+            else:
+                tag_font = "p"
+        else:
+            trs = soup.findAll("tr")
+            tag_font = "p"
+
+        for tr in trs:
             money = []
-            for p in tr.findChildren("p"):
+            for p in tr.findChildren(tag_font):
                 money.append(p.text)
             monetary_value.append(copy.copy(money))
         return monetary_value
@@ -85,15 +97,15 @@ class ExchangeRateADScraper:
         for year in years:
             print("year=", year)
             bopa_links = self.__get_bopa_links(year)
-            print("bopa_links", len(bopa_links))
             json_year = []
             for bopa_link in bopa_links:
                 json_csv = dict()
                 json_csv["year"] = year
                 json_csv["month"] = functions.get_code_month(bopa_link.get("text"))
-                json_csv["money"] = self.__get_monetary_value(bopa_link)
+                json_csv["money"] = self.__get_monetary_value(bopa_link, year, json_csv["month"])
                 json_year.append(json_csv)
-                time.sleep(global_vars.SECOND_SLEEP)
+                if not global_vars.is_developing:
+                    time.sleep(global_vars.SECOND_SLEEP)
             self.csv.generate_file_csv(json_year, action_file)
             action_file = "a" if action_file == "w" else "a"
 
@@ -103,6 +115,7 @@ if __name__ == "__main__":
     parser.add_argument('action', help='list active param', choices=[global_vars.SCRAPING, global_vars.ANALIZE])
 
     args = parser.parse_args()
+    print("mode is_developing=", global_vars.is_developing)
     if args.action == global_vars.ANALIZE:
         a = evaluation.Evaluation()
         a.do()
