@@ -1,10 +1,11 @@
 "Configure of environment"
-is_developing = True
+is_developing = False
 
 "CONSTANTS"
 ANALIZE = "analize"
-SECOND_SLEEP = 2.4
 SCRAPING = "scraping"
+
+SECOND_SLEEP = 2.4
 URL_GOVERN_DUANA = "http://www.duana.ad/canvis-monetaris"
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36'}
 LIST_MONTH = {
