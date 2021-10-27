@@ -41,17 +41,17 @@ class Evaluation:
             print("checking the page:", web)
 
             r = self.__is_available_in_robots(web)
-            sleep(global_vars.second_sleep)
+            sleep(global_vars.SECOND_SLEEP)
             print("\trobots.txt is available", r)
 
             r = self.__is_available_sitemap(web)
-            sleep(global_vars.second_sleep)
+            sleep(global_vars.SECOND_SLEEP)
             print("\tsitemap.xml", r)
 
             r = self.__get_info_web(web)
             print("\tInformation web:", r)
-            sleep(global_vars.second_sleep)
+            sleep(global_vars.SECOND_SLEEP)
 
             r = self.__who_is(web)
             print("\twho is:", r)
-            sleep(global_vars.second_sleep*2)
+            sleep(global_vars.SECOND_SLEEP*2)
